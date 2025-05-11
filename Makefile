@@ -39,6 +39,7 @@ STATIC := \
     index-pt.html \
     index-ru.html \
     index-sk.html \
+    index-ta.html \
     index-vi.html \
     index-zh-cn.html \
     index-zh-tw.html \
