@@ -1,0 +1,901 @@
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \branch stable -> A;
+    \branch main -> E;
+    \HEAD -> main;
+
+    \path [>=stealth', draw=black!50, very thick]
+        (5,3.75) node {reference to current branch} edge [->] (HEAD label)
+        (6.5,2) node {current branch} edge [->] (main)
+        (-5,3) node {another branch}\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \commit 2eecb (2) -> B;
+    \branch main -> E;
+    \branch stable -> A;
+    \olddetachedHEAD -> 2;
+    \HEAD -> main;
+
+    \node [cmd] at (0,3.75) {git checkout main};
+
+    \path [line]
+        (E) edge [bend left=20] (index)
+        (E) edge [bend left=35] (work)
+        (old HEAD) edge [dashed, bend left=15] (HEAD label)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \commit 2eecb (2) -> B;
+    \branch main -> E;
+    \branch stable -> A;
+    \olddetachedHEAD -> 2;
+
+    \begin{pgfonlayer}{HEAD}
+    \node [branch, double shadow, above right=.4\g of 2, draw=none, fill=none]  
+    {};
+    \end{pgfonlayer}
+    \node [branch, above right=.4\g of 2] (new) {new};
+    \path [branch line] (new) edge (2);
+    \HEAD -> new;
+
+    \node [cmd] at (-3,3.75) {git checkout -b new};
+
+    \path [line]
+        (old HEAD) edge [dashed, bend left=15] (HEAD label)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \branch main -> E;
+    \branch stable -> A;
+    \oldHEAD -> main;
+    \HEAD -> stable;
+
+    \node [cmd] at (0, 3.75) {git checkout stable};
+
+    \path [line]
+        (A) edge [bend right=22] (index)
+        (A) edge [bend right=35] (work)
+        (old HEAD label) edge [dashed, bend right=10] (HEAD label)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \branch main -> E;
+    \branch stable -> A;
+    \oldHEAD -> main;
+    \detachedHEAD -> B;
+
+    \node [cmd] at (0, 3.75) {git checkout main\~{}3};
+
+    \path [line]
+        (B) edge [bend right=20] (index)
+        (B) edge [bend right=40] (work)
+        (old HEAD label) edge [dashed, bend right=10] (HEAD)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \branch main -> E;
+    \branch stable -> A;
+    \HEAD -> main;
+
+    \node [cmd] at (0, 3.75) {git checkout HEAD\~{} \emph{files}};
+
+    \path [line]
+        (D) edge [bend left=20] (index)
+        (D) edge [bend left=45] (work)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \newcommit f142b (F) -> E;
+    \commit 169a6 (1) -> A;
+    \commit 2c33a (2) -> 1;
+    \commit 3ba22 (3) -> 2;
+    \branch topic -> 3;
+
+    \oldbranch main -> E;
+    \oldHEAD -> old main;
+    \branch main -> F;
+    \HEAD -> main;
+
+    \node [cmd] at (0, 3.75) {git cherry-pick 2c33a};
+
+    \path [line]
+        (F) edge [bend left=20] (index)
+        (F) edge [bend left=30] (work)
+        (old HEAD) edge [dashed, bend left=50] (HEAD)
+        (2) edge [loosely dashed, bend right=35] (F)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+
+    % trick the code to draw the commit below instead of above
+    \pgfkeys{/child count/D=-1}
+    \newcommit 4ca87 (4) -> D;
+
+    % this is a special case, so I won't make high level commands for this
+    \refbelow [branch] "main" : main -> 4;
+    \addHEADbelow [attached HEAD] "HEAD" : HEAD -> main;
+
+    \branch stable -> A;
+    \oldbranch main -> E;
+    \oldHEAD -> old main;
+
+    \node [cmd] at (0, 3.75) {git commit --amend};
+
+    \path [line]
+        (index) edge [bend right=10] (4)
+        (old HEAD) edge [dashed, bend left=60] (HEAD)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \newcommit 2eecb (2) -> B;
+    \branch main -> E;
+    \branch stable -> A;
+    \olddetachedHEAD -> B;
+    \detachedHEAD -> 2;
+
+    \node [cmd] at (0, 3.75) {git commit};
+
+    % Put a white border underneath the line since it croses over the graph.
+    \path [background line]
+        ($ (index.north) + (1,0) $) edge [-, bend right=20]
+            ($ (2.south east) + (-.09,.01) $);
+    \path [line]
+        ($ (index.north) + (1,0) $) edge [bend right=20]
+            ($ (2.south east) + (-.09,.01) $)
+        (old HEAD) edge [dashed, bend left=15] (HEAD)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \newcommit f0cec (F) -> E;
+    \oldbranch main -> E;
+    \branch main -> F;
+    \branch stable -> A;
+    \oldHEAD -> old main;
+    \HEAD -> main;
+
+    \node [cmd] at (0, 3.75) {git commit};
+
+    \path [line]
+        (index) edge [bend right=20] (F)
+        (old HEAD) edge [dashed, bend left=50] (HEAD)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \newcommit 1800b (1) -> A;
+    \branch main -> E;
+    \oldbranch stable -> A;
+    \branch stable -> 1;
+    \oldHEAD -> old stable;
+    \HEAD -> stable;
+
+    \node [cmd] at (0, 3.75) {git commit};
+
+    % Put a white border underneath the line since it croses over the graph.
+    \path [background line]
+        ($ (index.north) + (-.8,0) $) edge [-, bend right=13]
+            ($ (1.south east) + (-.09,.01) $);
+    \path [line]
+        ($ (index.north) + (-.8,0) $) edge [bend right=13]
+            ($ (1.south east) + (-.09,.01) $)
+        (old HEAD label) edge [dashed, bend left=10] (HEAD label)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \branch stable -> A;
+    \branch main -> E;
+    \HEAD -> main;
+
+    \path [>=stealth', draw=black!50, very thick]
+        (5,3.75) node {reference to current branch} edge [->] (HEAD label)
+        (6.5,2) node {current branch} edge [->] (main)
+        (-5,3) node {another branch} edge [->] (stable)
+        (-5,-0.5) node {files to go in next commit} edge [->] (index)
+        (-5,-2) node {files that you ``see''} edge [->] (work)
+        (5,-1) node [text width=6\g, text badly centered]
+          {commit objects, identified by SHA-1 hash}
+            edge [->] (E)
+            edge [->] (D)
+            edge [->] (C)
+
+        (-1,2.25) node {child points to parent} edge [->] ($ (B)!.5!(C) $)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+// GoatCounter: https://www.goatcounter.com
+// This file (and *only* this file) is released under the ISC license:
+// https://opensource.org/licenses/ISC
+;(function() {
+	'use strict';
+
+	if (window.goatcounter && window.goatcounter.vars)  // Compatibility with very old version; do not use.
+		window.goatcounter = window.goatcounter.vars
+	else
+		window.goatcounter = window.goatcounter || {}
+
+	// Load settings from data-goatcounter-settings.
+	var s = document.querySelector('script[data-goatcounter]')
+	if (s && s.dataset.goatcounterSettings) {
+		try         { var set = JSON.parse(s.dataset.goatcounterSettings) }
+		catch (err) { console.error('invalid JSON in data-goatcounter-settings: ' + err) }
+		for (var k in set)
+			if (['no_onload', 'no_events', 'allow_local', 'allow_frame', 'path', 'title', 'referrer', 'event'].indexOf(k) > -1)
+				window.goatcounter[k] = set[k]
+	}
+
+	var enc = encodeURIComponent
+
+	// Get all data we're going to send off to the counter endpoint.
+	var get_data = function(vars) {
+		var data = {
+			p: (vars.path     === undefined ? goatcounter.path     : vars.path),
+			r: (vars.referrer === undefined ? goatcounter.referrer : vars.referrer),
+			t: (vars.title    === undefined ? goatcounter.title    : vars.title),
+			e: !!(vars.event || goatcounter.event),
+			s: [window.screen.width, window.screen.height, (window.devicePixelRatio || 1)],
+			b: is_bot(),
+			q: location.search,
+		}
+
+		var rcb, pcb, tcb  // Save callbacks to apply later.
+		if (typeof(data.r) === 'function') rcb = data.r
+		if (typeof(data.t) === 'function') tcb = data.t
+		if (typeof(data.p) === 'function') pcb = data.p
+
+		if (is_empty(data.r)) data.r = document.referrer
+		if (is_empty(data.t)) data.t = document.title
+		if (is_empty(data.p)) data.p = get_path()
+
+		if (rcb) data.r = rcb(data.r)
+		if (tcb) data.t = tcb(data.t)
+		if (pcb) data.p = pcb(data.p)
+		return data
+	}
+
+	// Check if a value is "empty" for the purpose of get_data().
+	var is_empty = function(v) { return v === null || v === undefined || typeof(v) === 'function' }
+
+	// See if this looks like a bot; there is some additional filtering on the
+	// backend, but these properties can't be fetched from there.
+	var is_bot = function() {
+		// Headless browsers are probably a bot.
+		var w = window, d = document
+		if (w.callPhantom || w._phantom || w.phantom)
+			return 150
+		if (w.__nightmare)
+			return 151
+		if (d.__selenium_unwrapped || d.__webdriver_evaluate || d.__driver_evaluate)
+			return 152
+		if (navigator.webdriver)
+			return 153
+		return 0
+	}
+
+	// Object to urlencoded string, starting with a ?.
+	var urlencode = function(obj) {
+		var p = []
+		for (var k in obj)
+			if (obj[k] !== '' && obj[k] !== null && obj[k] !== undefined && obj[k] !== false)
+				p.push(enc(k) + '=' + enc(obj[k]))
+		return '?' + p.join('&')
+	}
+
+	// Show a warning in the console.
+	var warn = function(msg) {
+		if (console && 'warn' in console)
+			console.warn('goatcounter: ' + msg)
+	}
+
+	// Get the endpoint to send requests to.
+	var get_endpoint = function() {
+		var s = document.querySelector('script[data-goatcounter]')
+		if (s && s.dataset.goatcounter)
+			return s.dataset.goatcounter
+		return (goatcounter.endpoint || window.counter)  // counter is for compat; don't use.
+	}
+
+	// Get current path.
+	var get_path = function() {
+		var loc = location,
+			c = document.querySelector('link[rel="canonical"][href]')
+		if (c) {  // May be relative or point to different domain.
+			var a = document.createElement('a')
+			a.href = c.href
+			if (a.hostname.replace(/^www\./, '') === location.hostname.replace(/^www\./, ''))
+				loc = a
+		}
+		return (loc.pathname + loc.search) || '/'
+	}
+
+	// Run function after DOM is loaded.
+	var on_load = function(f) {
+		if (document.body === null)
+			document.addEventListener('DOMContentLoaded', function() { f() }, false)
+		else
+			f()
+	}
+
+	// Filter some requests that we (probably) don't want to count.
+	goatcounter.filter = function() {
+		if ('visibilityState' in document && document.visibilityState === 'prerender')
+			return 'visibilityState'
+		if (!goatcounter.allow_frame && location !== parent.location)
+			return 'frame'
+		if (!goatcounter.allow_local && location.hostname.match(/(localhost$|^127\.|^10\.|^172\.(1[6-9]|2[0-9]|3[0-1])\.|^192\.168\.|^0\.0\.0\.0$)/))
+			return 'localhost'
+		if (!goatcounter.allow_local && location.protocol === 'file:')
+			return 'localfile'
+		if (localStorage && localStorage.getItem('skipgc') === 't')
+			return 'disabled with #toggle-goatcounter'
+		return false
+	}
+
+	// Get URL to send to GoatCounter.
+	window.goatcounter.url = function(vars) {
+		var data = get_data(vars || {})
+		if (data.p === null)  // null from user callback.
+			return
+		data.rnd = Math.random().toString(36).substr(2, 5)  // Browsers don't always listen to Cache-Control.
+
+		var endpoint = get_endpoint()
+		if (!endpoint)
+			return warn('no endpoint found')
+
+		return endpoint + urlencode(data)
+	}
+
+	// Count a hit.
+	window.goatcounter.count = function(vars) {
+		var f = goatcounter.filter()
+		if (f)
+			return warn('not counting because of: ' + f)
+
+		var url = goatcounter.url(vars)
+		if (!url)
+			return warn('not counting because path callback returned null')
+
+		var img = document.createElement('img')
+		img.src = url
+		img.style.position = 'absolute'  // Affect layout less.
+		img.style.bottom = '0px'
+		img.style.width = '1px'
+		img.style.height = '1px'
+		img.loading = 'eager'
+		img.setAttribute('alt', '')
+		img.setAttribute('aria-hidden', 'true')
+
+		var rm = function() { if (img && img.parentNode) img.parentNode.removeChild(img) }
+		img.addEventListener('load', rm, false)
+		document.body.appendChild(img)
+	}
+
+	// Get a query parameter.
+	window.goatcounter.get_query = function(name) {
+		var s = location.search.substr(1).split('&')
+		for (var i = 0; i < s.length; i++)
+			if (s[i].toLowerCase().indexOf(name.toLowerCase() + '=') === 0)
+				return s[i].substr(name.length + 1)
+	}
+
+	// Track click events.
+	window.goatcounter.bind_events = function() {
+		if (!document.querySelectorAll)  // Just in case someone uses an ancient browser.
+			return
+
+		var send = function(elem) {
+			return function() {
+				goatcounter.count({
+					event:    true,
+					path:     (elem.dataset.goatcounterClick || elem.name || elem.id || ''),
+					title:    (elem.dataset.goatcounterTitle || elem.title || (elem.innerHTML || '').substr(0, 200) || ''),
+					referrer: (elem.dataset.goatcounterReferrer || elem.dataset.goatcounterReferral || ''),
+				})
+			}
+		}
+
+		Array.prototype.slice.call(document.querySelectorAll("*[data-goatcounter-click]")).forEach(function(elem) {
+			if (elem.dataset.goatcounterBound)
+				return
+			var f = send(elem)
+			elem.addEventListener('click', f, false)
+			elem.addEventListener('auxclick', f, false)  // Middle click.
+			elem.dataset.goatcounterBound = 'true'
+		})
+	}
+
+	// Add a "visitor counter" frame or image.
+	window.goatcounter.visit_count = function(opt) {
+		on_load(function() {
+			opt        = opt        || {}
+			opt.type   = opt.type   || 'html'
+			opt.append = opt.append || 'body'
+			opt.path   = opt.path   || get_path()
+			opt.attr   = opt.attr   || {width: '200', height: (opt.no_branding ? '60' : '80')}
+
+			opt.attr['src'] = get_endpoint() + 'er/' + enc(opt.path) + '.' + enc(opt.type) + '?'
+			if (opt.no_branding) opt.attr['src'] += '&no_branding=1'
+			if (opt.style)       opt.attr['src'] += '&style=' + enc(opt.style)
+			if (opt.start)       opt.attr['src'] += '&start=' + enc(opt.start)
+			if (opt.end)         opt.attr['src'] += '&end='   + enc(opt.end)
+
+			var tag = {png: 'img', svg: 'img', html: 'iframe'}[opt.type]
+			if (!tag)
+				return warn('visit_count: unknown type: ' + opt.type)
+
+			if (opt.type === 'html') {
+				opt.attr['frameborder'] = '0'
+				opt.attr['scrolling']   = 'no'
+			}
+
+			var d = document.createElement(tag)
+			for (var k in opt.attr)
+				d.setAttribute(k, opt.attr[k])
+
+			var p = document.querySelector(opt.append)
+			if (!p)
+				return warn('visit_count: append not found: ' + opt.append)
+			p.appendChild(d)
+		})
+	}
+
+	// Make it easy to skip your own views.
+	if (location.hash === '#toggle-goatcounter') {
+		if (localStorage.getItem('skipgc') === 't') {
+			localStorage.removeItem('skipgc', 't')
+			alert('GoatCounter tracking is now ENABLED in this browser.')
+		}
+		else {
+			localStorage.setItem('skipgc', 't')
+			alert('GoatCounter tracking is now DISABLED in this browser until ' + location + ' is loaded again.')
+		}
+	}
+
+	if (!goatcounter.no_onload)
+		on_load(function() {
+			// 1. Page is visible, count request.
+			// 2. Page is not yet visible; wait until it switches to 'visible' and count.
+			// See #487
+			if (!('visibilityState' in document) || document.visibilityState === 'visible')
+				goatcounter.count()
+			else {
+				var f = function(e) {
+					if (document.visibilityState !== 'visible')
+						return
+					document.removeEventListener('visibilitychange', f)
+					goatcounter.count()
+				}
+				document.addEventListener('visibilitychange', f)
+			}
+
+			if (!goatcounter.no_events)
+				goatcounter.bind_events()
+		})
+})();
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \normalcommits
+    \indexnode[2,-3]
+    \worknode[-2,-3]
+    \commit 2eecb (2) -> B;
+    \commit 33104 (3) -> 2;
+    \branch other -> 3;
+
+    % draw the old branch manually with a long line
+    \node [old branch, above=1 of E] (old main) {main};
+    \path [old branch line] (old main) edge (E);
+    \node [cancel ref, above=.2\g of E, anchor=center] {};
+    \oldHEAD -> old main;
+
+    \newcommit f8bc5 (F) -> E;
+    \branch main -> F;
+    \HEAD -> main;
+    \path [background line, bend right=15] (F) edge[-] (3);
+    \path [commit line, bend right=15] (F) edge (3);
+
+    \node [cmd] at (0, 3.75) {git merge other};
+
+    \node [inner sep=8\gLine] (merge) at (0,-1) {3-way merge};
+
+    \path [background line]
+        (3) edge [-, bend right=15] (merge)
+        ;
+    \path [line]
+        (3) edge [bend right=15] (merge)
+        (B) edge [bend right=37] (merge)
+        (E) edge [bend left=20] (merge)
+        (merge) edge [bend right=10] (index)
+        (merge) edge [bend left=10] (work)
+        (index) edge [bend right=35] node [near start] {(if no conflicts)} (F)
+        (old HEAD label) edge [dashed, bend left=35] (HEAD)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \refbelow [branch] "main" : main -> E;
+    \oldbranch stable -> A;
+    \branch stable -> E;
+    \oldHEAD -> old stable;
+    \HEAD -> stable;
+
+    \node [cmd] at (0, 3.75) {git merge main};
+
+    \path [line]
+        (E) edge [bend right=5] (index.north east)
+        (E) edge [bend right=15] (work.north east)
+        (old HEAD) edge [dashed, bend left=10] (HEAD)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \indexnode
+    \worknode
+    \commitTerminal cT at (-6,.75);
+    \commit a47c3 (A) -> cT;
+    \commit b325c (B) -> A;
+    \commit c10b9 (C) -> B;
+    \commit da985 (D) -> C;
+    \newcommit e57cf (E) -> D;
+    \newcommit f7e63 (F) -> E;
+    \commit 169a6 (1) -> A;
+    \commit 2c33a (2) -> 1;
+
+    \oldbranch topic -> 2;
+    \oldHEAD -> old topic;
+    \branch main -> D;
+    \branch topic -> F;
+    \HEAD -> topic;
+
+    \node [cmd,right] at (1, 3.75) {git rebase main};
+
+    \path [line]
+        (F) edge [bend left=20] (index)
+        (F) edge [bend left=30] (work)
+        (old HEAD label) edge [dashed, bend left=10] (HEAD label)
+        (1) edge [loosely dashed, bend right=35] (E)
+        (2) edge [loosely dashed, bend left=30] (F)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \indexnode
+    \worknode
+    \commitTerminal cT at (-6,.75);
+    \commit a47c3 (A) -> cT;
+    \commit b325c (B) -> A;
+    \commit c10b9 (C) -> B;
+    \commit da985 (D) -> C;
+    \newcommit e918c (E) -> D;
+    \commit 169a6 (1) -> A;
+    \commit 2c33a (2) -> 1;
+
+    \oldbranch topic -> 2;
+    \oldHEAD -> old topic;
+    \branch main -> D;
+    \branch topic -> E;
+    \HEAD -> topic;
+
+    \node [cmd,right] at (1, 3.75) {git rebase --onto main 169a6};
+
+    \path [line]
+        (E) edge [bend left=20] (index)
+        (E) edge [bend left=30] (work)
+        (old HEAD label) edge [dashed, bend left=10] (HEAD label)
+        (2) edge [loosely dashed, bend right=40] (E)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \branch main -> E;
+    \branch stable -> A;
+    \HEAD -> main;
+
+    \node [cmd] (cmd1) at (0, 3.75) {git reset};
+
+    \path [line, auto=left]
+        (E) edge [bend left=20] (index)
+        (E) edge [bend left=30] node {(if \texttt{--hard})} (work)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \branch stable -> A;
+    \oldbranch main -> E;
+    \branch main -> B;
+    \oldHEAD -> old main;
+    \HEAD -> main;
+
+    \node [cmd] at (0, 3.75) {git reset HEAD\~{}3};
+
+    \path [line, auto=left]
+        (B) edge [bend right=20] node [near end]
+          {(if not \texttt{--soft})} (index)
+        (B) edge [bend right=40] node [swap] {(if \texttt{--hard})} (work)
+        (old HEAD) edge [dashed, bend right=15] (HEAD)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+\input{common.tex}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \usualsetup
+    \branch main -> E;
+    \branch stable -> A;
+    \HEAD -> main;
+
+    \node [cmd] (cmd1) at (0, 3.75) {git reset -- \emph{files}};
+
+    \path [line]
+        (E) edge [bend left=20] (index)
+        ;
+
+\end{tikzpicture}
+\end{document}
+
+html{
+    background: #FAFAFA;
+}
+
+body{
+    font-family: sans-serif;
+    margin: 0 auto;
+    width: 70%;
+    padding: 20px 0px;
+    background: white;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+    color: rgba(0,0,0,0.7);
+}
+
+@media handheld, screen and (max-width: 995px){
+    body{
+        width: 100%;
+    }
+}
+
+h1, h2, h3{
+    color: rgba(0,0,0,0.8);
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+h1{font-size: 4rem;}
+h2{font-size: 2rem;}
+h3{font-size: 1.2rem;}
+
+a, a:visited{
+    text-decoration: none;
+    color: #f05033;
+    font-size: 1rem;
+}
+
+
+p, div, ol, ul, pre, strong{
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+hr{
+    color: #212121;
+    height: 1px;
+    background: #BDBDBD;
+}
+
+
+.center {
+    text-align: center;
+}
+#link-to-png, #link-to-svg {
+    font-style: italic; display: none;
+}
+ol ol {
+    list-style-type: lower-alpha;
+}
+#language-box {
+    position: absolute;
+    top: 2px;
+    font-family: sans-serif;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+#language-box ul {
+    display: inline;
+    list-style: none;
+    margin: 0 0 0 -0.5em;
+    padding: 0.5em;
+    width: 100%;
+}
+#language-box ul li {
+    padding: .2ex 0;
+    display: inline;
+}
+#language-box ul li.selected {
+    display: none;
+}
+@media print {
+    #language-box {
+        display: none;
+    }
+    body{
+        width: 100%;
+    }
+}
+pre {
+  margin-left: 2em;
+}
+
+// Webkit browsers can't zoom properly with object tags.
+if (navigator.userAgent.indexOf("AppleWebKit") > -1) {
+  replacePNG = function(img, src) {
+    var h = img.height, w = img.width;
+    img.src = src;
+    img.height = h;
+    img.width = w;
+    return 0;
+  }
+} else {
+  replacePNG = function(img, src) {
+    var p = img.parentNode;
+    var obj = document.createElement('object');
+    obj.type = 'image/svg+xml';
+    obj.data = src;
+    obj.width = img.width;
+    obj.height = img.height;
+    p.appendChild(obj);
+    p.removeChild(img);
+    return -1;
+  }
+}
+var svg_disabled = window.location.search.indexOf("no-svg") > 0;
+// Replace all the PNGs with SVGs on browsers that support them.
+function replace_all_PNGs() {
+  var hasSVG = document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
+  if (hasSVG) {
+    if (svg_disabled) {
+      document.getElementById('link-to-svg').style.display = 'block';
+      return;
+    }
+    var images = document.getElementsByTagName('img');
+    for (var i = 0; i < images.length; i++) {
+      var img = images[i];
+      var src = img.src.match(/^(.*\.svg)\.png$/)
+      if (src)
+        i += replacePNG(img, src[1]);
+    }
+    document.getElementById('link-to-png').style.display = 'block';
+  }
+}
+
+// enable Google Analytics
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-13167645-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+ edge [->] (stable)
+        (-5,-0.5) node {files to go in next commit} edge [->] (index)
+        (-5,-2) node {files that you ``see''} edge [->] (work)
+        (5,-1) node [text width=6\g, text badly centered]
+          {commit objects, identified by SHA-1 hash}
+            edge [->] (E)
+            edge [->] (D)
+            edge [->] (C)
+
+        (-1,2.25) node {child points to parent} edge [->] ($ (B)!.5!(C) $)
+        ;
+
+\end{tikzpicture}
+\end{document}

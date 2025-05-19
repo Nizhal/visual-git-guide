@@ -1,0 +1,25 @@
+\input{common.tex}
+\geometry{papersize={21\g,9\g}}
+\begin{document}
+\begin{tikzpicture}[main]
+    \boundingbox
+    \வரலாறுமுனை[0,2]
+    \மேடைமுனை[0,0]
+    \பணிமுனை[0,-2]
+
+    \path [line]
+        (பணி.north east)
+            edge node[cmd] {git add \emph{கோப்புகள்}}
+        (மேடை.south east)
+        (மேடை.north east)
+            edge node[cmd] {git commit}
+        (தலை.south east)
+        (மேடை.south west)
+            edge node[cmd] {git checkout -- \emph{கோப்புகள்}}
+        (பணி.north west)
+        (தலை.south west)
+            edge node[cmd] {git reset -- \emph{கோப்புகள்}}
+        (மேடை.north west)
+        ;
+\end{tikzpicture}
+\end{document}

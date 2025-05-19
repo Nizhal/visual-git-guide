@@ -23,7 +23,10 @@ FILES := \
     rebase-onto \
     reset \
     reset-commit \
-    reset-files
+    reset-files\
+    ta/அடிப்படை-பயன்பாடு\
+     ta/அடிப்படை-பயன்பாடு-2\
+     ta/reset-files
 
 STATIC := \
     goatcounter.js \
